@@ -51,7 +51,27 @@ flutter:
   fonts:
     - family: TradeWinds
       fonts:
-      - asset: assets/TradeWinds-Regular.ttf
+        - asset: assets/fonts/TradeWinds-Regular.ttf
+
+    - family: CinzelDecorative
+      fonts:
+        - asset: assets/fonts/CinzelDecorative-Black.ttf
+
+    - family: FontdinerSwanky
+      fonts:
+        - asset: assets/fonts/FontdinerSwanky-Regular.ttf
+
+    - family: VastShadow
+      fonts:
+        - asset: assets/fonts/VastShadow-Regular.ttf
+
+    - family: CroissantOne
+      fonts:
+        - asset: assets/fonts/CroissantOne-Regular.ttf
+
+    - family: Merienda
+      fonts:
+        - asset: assets/fonts/Merienda-Regular.ttf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

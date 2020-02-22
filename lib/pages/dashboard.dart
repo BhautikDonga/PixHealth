@@ -26,14 +26,15 @@ class _DashBoardState extends State<DashBoard> {
         ),
       ),
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        margin: EdgeInsets.symmetric(vertical: 5),
         color: Colors.white,
         width: double.infinity,
         child: Center(
           child: Text(
             text,
             style: TextStyle(
-              fontSize: 20,
+              fontFamily: 'CroissantOne',
+              fontSize: 22,
               color: Colors.blue,
             ),
           ),
@@ -71,20 +72,22 @@ class _DashBoardState extends State<DashBoard> {
       margin: EdgeInsets.fromLTRB(20, 50, 20, 20),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(80)),
+        borderRadius: BorderRadius.all(Radius.circular(30)),
         gradient: LinearGradient(
-          colors: [Colors.yellowAccent, Colors.greenAccent],
-          begin: Alignment.centerRight,
-          end: new Alignment(1.0, -1.0),
-          tileMode: TileMode.mirror,
+          //colors: [Colors.yellowAccent, Colors.greenAccent],
+          colors: [Color(0xFFFFCF00), Color(0xFFFFDF01)],
+          begin: Alignment.center,
+          end: new Alignment(1.0, 8.0),
+          tileMode: TileMode.repeated,
         ),
       ),
       child: Center(
         child: Text(
           'PixHealth',
           style: TextStyle(
-            fontSize: 40,
-            fontWeight: FontWeight.w100,
+            fontFamily: 'VastShadow',
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
             letterSpacing: 2,
             color: Colors.red,
           ),
@@ -109,14 +112,14 @@ class _DashBoardState extends State<DashBoard> {
               Expanded(
                 flex: 9,
                 child: Container(
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(36)),
+                      borderRadius: BorderRadius.all(Radius.circular(36)),
 //                    borderRadius: BorderRadius.only(
 //                        topLeft: Radius.circular(30),
 //                        topRight: Radius.circular(30)),
-                    color: Color(0XFFFBB73F),
-                  ),
+                      //color: Color(0XFFFBB73F),
+                      color: Color(0xFFFFCF00)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
