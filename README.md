@@ -1,4 +1,4 @@
-# pix_health
+# PixHealth
 
 A new Flutter application.
 
