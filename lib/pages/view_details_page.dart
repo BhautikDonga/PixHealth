@@ -13,6 +13,7 @@ class _ViewDetailsState extends State<ViewDetails> {
     "DOB",
     "Age",
     "Gender",
+    "Blood Group",
     "Height",
     "Weight",
     "Genetic Disease",

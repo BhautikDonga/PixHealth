@@ -60,13 +60,16 @@ class _NearbyHospitalState extends State<NearbyHospital> {
                           color: Colors.white,
                           child: Padding(
                             padding: EdgeInsets.symmetric(
-                                vertical: 14.0, horizontal: 16.0),
-                            child: Text(
-                              hospitals[pos],
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                //height: 1,
+                                vertical: 4.0, horizontal: 12.0),
+                            child: ListTile(
+                              title: Text(
+                                hospitals[pos],
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  //height: 1,
+                                ),
                               ),
+                              trailing: Icon(Icons.chevron_right),
                             ),
                           ),
                         ));

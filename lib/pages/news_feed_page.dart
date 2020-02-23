@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:pix_health/pages/newsfeed_data.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NewsFeed extends StatefulWidget {
   @override
@@ -9,21 +10,44 @@ class NewsFeed extends StatefulWidget {
 
 class _NewsFeedState extends State<NewsFeed> {
   List<NewsFeedData> news = [];
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  _launchURL(String url) async {
+    print(url);
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      //throw 'Could not launch $url';
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Could not launch url."),
+        duration: Duration(seconds: 3),
+      ));
+    }
+  }
 
   Widget UI(String heading, String url) {
-    return Card(
-      elevation: 10.0,
-      child: Container(
-        padding: EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              heading,
-              style: Theme.of(context).textTheme.title,
-            ),
-            Text(url),
-          ],
+    return InkWell(
+      onTap: () => _launchURL(url),
+      child: Card(
+        elevation: 10.0,
+        child: Container(
+          padding: EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                heading,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .title,
+              ),
+              Text(
+                url,
+                maxLines: 1,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -52,6 +76,7 @@ class _NewsFeedState extends State<NewsFeed> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(
             'News Around',
@@ -64,19 +89,19 @@ class _NewsFeedState extends State<NewsFeed> {
         body: Container(
           child: news.length == 0
               ? Center(
-                  child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(),
-                    Text('Data loading...'),
-                  ],
-                ))
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  Text('Data loading...'),
+                ],
+              ))
               : ListView.builder(
-                  itemCount: news.length,
-                  itemBuilder: (_, index) {
-                    return UI(news[index].heading, news[index].url);
-                  },
-                ),
+            itemCount: news.length,
+            itemBuilder: (_, index) {
+              return UI(news[index].heading, news[index].url);
+            },
+          ),
         ),
       ),
     );

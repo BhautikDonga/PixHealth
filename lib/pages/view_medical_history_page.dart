@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:pix_health/pages/image_listview.dart';
 import 'package:pix_health/pages/report_data.dart';
 
 class MedicalHistory extends StatefulWidget {
@@ -9,27 +10,81 @@ class MedicalHistory extends StatefulWidget {
 
 class _MedicalHistoryState extends State<MedicalHistory> {
   List<ReportData> allData = [];
+  int _currentIndex = 0;
+  List<Widget> _children = [];
+
+  void onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  Future<void> _ackDocuments(BuildContext context) {
+    return showDialog<void>(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0)), //this right here
+              child: Scaffold(
+//              appBar: AppBar(
+//                title: Text("hello"),
+//              ),
+                body: _children[_currentIndex],
+                bottomNavigationBar: BottomNavigationBar(
+                  currentIndex: _currentIndex,
+                  onTap: onTabTapped,
+                  elevation: 4,
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.filter_center_focus),
+                      title: Text('Reports'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.description),
+                      title: Text('Prescription'),
+                    ),
+                  ],
+                ),
+              ));
+        });
+  }
 
   Widget UI(String date, String doctor, String hospital, String diagnosis,
-      String document_url) {
+      var report_url, var prescription_url) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Card(
-        elevation: 10.0,
-        child: Container(
-          padding: EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Date : $date',
-                style: Theme.of(context).textTheme.title,
-              ),
-              Text('Doctor : $doctor'),
-              Text('Hospital : $hospital'),
-              Text('Diagnosis : $diagnosis'),
-              Text('Document_url : $document_url')
-            ],
+      child: InkWell(
+        onTap: () {
+          _children.clear();
+          _children.add(ImageList(report_url));
+          _children.add(ImageList(prescription_url));
+          setState(() {
+            _ackDocuments(context);
+          });
+        },
+        child: Card(
+          elevation: 10.0,
+          child: Container(
+            padding: EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Date : $date',
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .title,
+                ),
+                Text('Doctor : $doctor'),
+                Text('Hospital : $hospital'),
+                Text('Diagnosis : $diagnosis'),
+                Text('Report_url : ${report_url}'),
+                Text('Prescription_url : ${prescription_url}'),
+              ],
+            ),
           ),
         ),
       ),
@@ -54,7 +109,8 @@ class _MedicalHistoryState extends State<MedicalHistory> {
             data[key]['Doctor'],
             data[key]['Hospital'],
             data[key]['Diagnosis'],
-            data[key]['DocumentUrl']);
+            data[key]['ReportUrl'],
+            data[key]['PrescriptionUrl']);
         allData.add(d);
       }
       setState(() {
@@ -96,7 +152,8 @@ class _MedicalHistoryState extends State<MedicalHistory> {
                         allData[index].doctor,
                         allData[index].hospital,
                         allData[index].diagnosis,
-                        allData[index].document_url);
+                        allData[index].report_url,
+                        allData[index].prescription_url);
                   },
                 ),
         ),
