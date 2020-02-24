@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pix_health/pages/dashboard.dart';
-import 'package:pix_health/pages/loginPage.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -13,21 +11,23 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   void initState() {
     super.initState();
-    Object obj;
+
+    String route;
     _auth.currentUser().then((user) {
       if (user == null) {
-        obj = LoginPage();
+        route = '/login';
       } else {
-        obj = DashBoard(user: user);
+        route = '/dashboard';
       }
     });
-    Timer(
-        Duration(seconds: 3),
-        () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) => obj)));
+    //while (!isConnected) {}
+
+    Timer(Duration(seconds: 3),
+        () => Navigator.of(context).pushReplacementNamed(route));
   }
 
   @override

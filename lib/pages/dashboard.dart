@@ -1,13 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pix_health/pages/further_appointment_page.dart';
-import 'package:pix_health/pages/nearby_hospital_page.dart';
-import 'package:pix_health/pages/news_feed_page.dart';
-import 'package:pix_health/pages/view_details_page.dart';
-import 'package:pix_health/pages/view_medical_history_page.dart';
-import 'package:pix_health/pages/view_medicine_page.dart';
-
-import 'loginPage.dart';
 
 class DashBoard extends StatefulWidget {
   DashBoard({Key key, this.user});
@@ -17,6 +9,79 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
+  Future<bool> _onBackPressed() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            elevation: 8,
+            //backgroundColor: Color(0xFFffd589),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: Text(
+              'Are you sure?',
+              style: TextStyle(fontFamily: 'CinzelDecorative'),
+            ),
+            content: Text(
+              'You are going to exit the application!!',
+              style: TextStyle(fontFamily: 'McLaren'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  'NO',
+                  style: TextStyle(fontSize: 18, fontFamily: 'FontdinerSwanky'),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              FlatButton(
+                child: Text(
+                  'YES',
+                  style: TextStyle(fontSize: 18, fontFamily: 'FontdinerSwanky'),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<void> _onSignOutPressed() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: Text('Are you sure?'),
+            content: Text('You are going to Log out from application!!'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('NO'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              FlatButton(
+                child: Text('YES'),
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/login', (Route<dynamic> route) => false);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   Widget makeCardButton(String text) {
     return Card(
       elevation: 8,
@@ -43,25 +108,19 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
 
-  Widget makeContainer(BuildContext context, String text, Object obj) {
+  Widget makeContainer(BuildContext context, String text, String route) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => obj),
-        );
+        Navigator.pushNamed(context, route);
       },
       child: makeCardButton(text),
     );
   }
 
-  Widget makeLogoutContainer(BuildContext context, String text, Object obj) {
+  Widget makeLogoutContainer(BuildContext context, String text) {
     return InkWell(
       onTap: () {
-        FirebaseAuth.instance.signOut();
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => obj),
-            (Route<dynamic> route) => false);
+        _onSignOutPressed();
       },
       child: makeCardButton(text),
     );
@@ -98,46 +157,48 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Container(
-          child: Column(
-            children: <Widget>[
-              title(),
-              Expanded(
-                flex: 1,
-                child: SizedBox(),
-              ),
-              Expanded(
-                flex: 9,
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(36)),
-//                    borderRadius: BorderRadius.only(
-//                        topLeft: Radius.circular(30),
-//                        topRight: Radius.circular(30)),
-                      //color: Color(0XFFFBB73F),
-                      color: Color(0xFFFFBA03)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      makeContainer(context, 'View Details', ViewDetails()),
-                      makeContainer(context, 'News Feed', NewsFeed()),
-                      makeContainer(
-                          context, 'View Medical History', MedicalHistory()),
-                      makeContainer(
-                          context, 'Further Appointment', FurtherAppointment()),
-                      makeContainer(context, 'View Medicines', ViewMedicine()),
-                      makeContainer(
-                          context, 'Nearby Hospitals', NearbyHospital()),
-                      makeLogoutContainer(context, 'Sign Out', LoginPage()),
-                    ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Container(
+            child: Column(
+              children: <Widget>[
+                title(),
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(),
+                ),
+                Expanded(
+                  flex: 9,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(36)),
+                        color: Color(0xFFFFBA03)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        makeContainer(
+                            context, 'View Details', '/dashboard/profile'),
+                        makeContainer(
+                            context, 'News Feed', '/dashboard/newsfeed'),
+                        makeContainer(context, 'View Medical History',
+                            '/dashboard/medicalhistory'),
+                        makeContainer(context, 'Further Appointment',
+                            '/dashboard/furtherappointments'),
+                        makeContainer(
+                            context, 'View Medicines', '/dashboard/medicines'),
+                        makeContainer(context, 'Nearby Hospitals',
+                            '/dashboard/nearbyhospitals'),
+                        makeLogoutContainer(context, 'Sign Out'),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

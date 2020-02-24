@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pix_health/pages/dashboard.dart';
 import 'package:pix_health/pages/signup.dart';
 import 'package:pix_health/src/bezierContainer.dart';
@@ -16,6 +16,48 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  Future<bool> _onBackPressed() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: Text('Are you sure?'),
+            content: Text('You are going to exit the application!!'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('NO'),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              FlatButton(
+                child: Text('YES'),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  showAlertDialog(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _entryField(String title, String error, {bool isPassword = false}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -186,64 +228,68 @@ class _LoginPageState extends State<LoginPage> {
   String _email, _password;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Scaffold(
-          body: SingleChildScrollView(
-              child: Container(
-        height: MediaQuery.of(context).size.height,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    flex: 3,
-                    child: SizedBox(
-                      height: 40,
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Form(
+        key: _formKey,
+        child: Scaffold(
+            body: SingleChildScrollView(
+                child: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Stack(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(
+                        height: 40,
+                      ),
                     ),
-                  ),
-                  _title(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  _emailPasswordWidget(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  _submitButton(),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    alignment: Alignment.centerRight,
-                    child: Text('Forgot Password ?',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500)),
-                  ),
-                  _divider(),
-                  Expanded(
-                    flex: 1,
-                    child: SizedBox(),
-                  ),
-                ],
+                    _title(),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    _emailPasswordWidget(),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    _submitButton(),
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      alignment: Alignment.centerRight,
+                      child: Text('Forgot Password ?',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500)),
+                    ),
+                    _divider(),
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: _createAccountLabel(),
-            ),
-            //Positioned(top: 40, left: 0, child: _backButton()),
-            Positioned(
-                top: -MediaQuery.of(context).size.height * .14,
-                right: -MediaQuery.of(context).size.width * .4,
-                child: BezierContainer())
-          ],
-        ),
-      ))),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: _createAccountLabel(),
+              ),
+              //Positioned(top: 40, left: 0, child: _backButton()),
+              Positioned(
+                  top: -MediaQuery.of(context).size.height * .14,
+                  right: -MediaQuery.of(context).size.width * .4,
+                  child: BezierContainer())
+            ],
+          ),
+        ))),
+      ),
     );
   }
 
@@ -256,11 +302,13 @@ class _LoginPageState extends State<LoginPage> {
         print(_email);
         print(_password);
         SystemChannels.textInput.invokeMethod('TextInput.hide');
-        //CircularProgressIndicator();
+
+        showAlertDialog(context);
         FirebaseUser user = (await _auth.signInWithEmailAndPassword(
                 email: _email, password: _password))
             .user;
         print(user);
+        Navigator.of(context).pop();
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => DashBoard(user: user)));
       } catch (e) {

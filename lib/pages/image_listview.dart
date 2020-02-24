@@ -15,7 +15,6 @@ class _ImageListState extends State<ImageList> {
   void initState() {
     for (var url in widget.listOfImages) {
       images.add(Image.network(url));
-      print(url);
     }
   }
 
@@ -24,6 +23,8 @@ class _ImageListState extends State<ImageList> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width * 0.95,
+      height: MediaQuery.of(context).size.height * 0.95,
       child: images.length == 0
           ? Center(
               child: Column(
@@ -34,11 +35,8 @@ class _ImageListState extends State<ImageList> {
                 ],
               ),
             )
-          : SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: images,
-              ),
+          : PageView(
+              children: images,
             ),
     );
   }

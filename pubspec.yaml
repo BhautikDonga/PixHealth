@@ -28,6 +28,7 @@ dependencies:
   firebase_database: ^3.1.1
   firebase_auth: ^0.15.4
   url_launcher: ^5.4.2
+  connectivity: ^0.4.8+1
 
 dev_dependencies:
   flutter_test:
@@ -70,9 +71,9 @@ flutter:
       fonts:
         - asset: assets/fonts/CroissantOne-Regular.ttf
 
-    - family: Merienda
+    - family: McLaren
       fonts:
-        - asset: assets/fonts/Merienda-Regular.ttf
+        - asset: assets/fonts/McLaren-Regular.ttf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

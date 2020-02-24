@@ -18,6 +18,20 @@ class _SignUpPageState extends State<SignUpPage> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  showAlertDialog(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -229,20 +243,16 @@ class _SignUpPageState extends State<SignUpPage> {
     if (formState.validate()) {
       formState.save();
       try {
-        print(_userid);
-        print(_email);
-        print(_password);
-        print("unique key" + UniqueKey().toString());
-        print('Global key' + GlobalKey().toString());
-        AuthResult result = await _auth.createUserWithEmailAndPassword(
+        showAlertDialog(context);
+        await _auth.createUserWithEmailAndPassword(
             email: _email, password: _password);
-        //sendEmailVerification();
-        Navigator.of(context).pop();
+        sendEmailVerification();
+        Navigator.of(context).popUntil(ModalRoute.withName('/login'));
       } catch (e) {
         print('Error: ' + e.message);
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text(e.message),
-          duration: Duration(seconds: 3),
+          duration: Duration(seconds: 5),
         ));
       }
     }

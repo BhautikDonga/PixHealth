@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:pix_health/pages/image_listview.dart';
 import 'package:pix_health/pages/report_data.dart';
+import 'package:pix_health/pages/report_prescription_dialog.dart';
 
 class MedicalHistory extends StatefulWidget {
   @override
@@ -9,15 +10,8 @@ class MedicalHistory extends StatefulWidget {
 }
 
 class _MedicalHistoryState extends State<MedicalHistory> {
-  List<ReportData> allData = [];
-  int _currentIndex = 0;
+  List<ReportData> reportData = [];
   List<Widget> _children = [];
-
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
 
   Future<void> _ackDocuments(BuildContext context) {
     return showDialog<void>(
@@ -25,29 +19,8 @@ class _MedicalHistoryState extends State<MedicalHistory> {
         context: context,
         builder: (BuildContext context) {
           return Dialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0)), //this right here
-              child: Scaffold(
-//              appBar: AppBar(
-//                title: Text("hello"),
-//              ),
-                body: _children[_currentIndex],
-                bottomNavigationBar: BottomNavigationBar(
-                  currentIndex: _currentIndex,
-                  onTap: onTabTapped,
-                  elevation: 4,
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.filter_center_focus),
-                      title: Text('Reports'),
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.description),
-                      title: Text('Prescription'),
-                    ),
-                  ],
-                ),
-              ));
+            child: ReportPrescriptionDialogBox(_children),
+          );
         });
   }
 
@@ -60,9 +33,7 @@ class _MedicalHistoryState extends State<MedicalHistory> {
           _children.clear();
           _children.add(ImageList(report_url));
           _children.add(ImageList(prescription_url));
-          setState(() {
-            _ackDocuments(context);
-          });
+          _ackDocuments(context);
         },
         child: Card(
           elevation: 10.0,
@@ -81,8 +52,6 @@ class _MedicalHistoryState extends State<MedicalHistory> {
                 Text('Doctor : $doctor'),
                 Text('Hospital : $hospital'),
                 Text('Diagnosis : $diagnosis'),
-                Text('Report_url : ${report_url}'),
-                Text('Prescription_url : ${prescription_url}'),
               ],
             ),
           ),
@@ -102,7 +71,7 @@ class _MedicalHistoryState extends State<MedicalHistory> {
         .then((DataSnapshot snap) {
       var keys = snap.value.keys;
       var data = snap.value;
-      allData.clear();
+      reportData.clear();
       for (var key in keys) {
         ReportData d = ReportData(
             data[key]['Date'],
@@ -111,10 +80,10 @@ class _MedicalHistoryState extends State<MedicalHistory> {
             data[key]['Diagnosis'],
             data[key]['ReportUrl'],
             data[key]['PrescriptionUrl']);
-        allData.add(d);
+        reportData.add(d);
       }
       setState(() {
-        print('Length: ${allData.length}');
+        print('Length: ${reportData.length}');
       });
     });
   }
@@ -134,7 +103,7 @@ class _MedicalHistoryState extends State<MedicalHistory> {
         ),
         body: Container(
           padding: EdgeInsets.only(top: 4),
-          child: allData.length == 0
+          child: reportData.length == 0
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -145,15 +114,15 @@ class _MedicalHistoryState extends State<MedicalHistory> {
                   ),
                 )
               : ListView.builder(
-                  itemCount: allData.length,
+            itemCount: reportData.length,
                   itemBuilder: (_, index) {
                     return UI(
-                        allData[index].date,
-                        allData[index].doctor,
-                        allData[index].hospital,
-                        allData[index].diagnosis,
-                        allData[index].report_url,
-                        allData[index].prescription_url);
+                        reportData[index].date,
+                        reportData[index].doctor,
+                        reportData[index].hospital,
+                        reportData[index].diagnosis,
+                        reportData[index].report_url,
+                        reportData[index].prescription_url);
                   },
                 ),
         ),
