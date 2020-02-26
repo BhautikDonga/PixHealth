@@ -1,4 +1,6 @@
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pix_health/src/bezierContainer.dart';
@@ -55,7 +57,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _entryField(String title, String error, {bool isPassword = false}) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.symmetric(vertical: 6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -68,7 +70,7 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
           TextFormField(
               validator: (String value) {
-                return value.length == 0 ? error : null;
+                return value.length <= 8 ? error : null;
               },
               onSaved: (value) {
                 if (title == 'User Id') {
@@ -99,6 +101,46 @@ class _SignUpPageState extends State<SignUpPage> {
         _entryField("Password", 'Please Enter correct password',
             isPassword: true),
       ],
+    );
+  }
+
+  Widget _offlineSubmitButton() {
+    return InkWell(
+      onTap: null,
+      child: Container(
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
+        padding: EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  offset: Offset(2, 4),
+                  blurRadius: 5,
+                  spreadRadius: 2)
+            ],
+            gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [Color(0xfffbb448), Color(0xfff7892b)])),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Connecting..',
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            CupertinoActivityIndicator(radius: 10.0),
+          ],
+        ),
+      ),
     );
   }
 
@@ -193,47 +235,51 @@ class _SignUpPageState extends State<SignUpPage> {
           key: _scaffoldKey,
           body: SingleChildScrollView(
               child: Container(
-            height: MediaQuery.of(context).size.height,
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 3,
-                        child: SizedBox(),
+                height: MediaQuery.of(context).size.height,
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            flex: 5,
+                            child: SizedBox(),
+                          ),
+                          _title(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          _emailPasswordWidget(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          ConnectivityWidgetWrapper(
+                            stacked: false,
+                            offlineWidget: _offlineSubmitButton(),
+                            child: _submitButton(),
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child: SizedBox(),
+                          )
+                        ],
                       ),
-                      _title(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      _emailPasswordWidget(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      _submitButton(),
-                      Expanded(
-                        flex: 2,
-                        child: SizedBox(),
-                      )
-                    ],
-                  ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: _loginAccountLabel(),
+                    ),
+                    Positioned(top: 40, left: 0, child: _backButton()),
+                    Positioned(
+                        top: -MediaQuery.of(context).size.height * .16,
+                        right: -MediaQuery.of(context).size.width * .45,
+                        child: BezierContainer())
+                  ],
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: _loginAccountLabel(),
-                ),
-                Positioned(top: 40, left: 0, child: _backButton()),
-                Positioned(
-                    top: -MediaQuery.of(context).size.height * .16,
-                    right: -MediaQuery.of(context).size.width * .45,
-                    child: BezierContainer())
-              ],
-            ),
-          ))),
+              ))),
     );
   }
 

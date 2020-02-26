@@ -1,3 +1,4 @@
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pix_health/pages/dashboard.dart';
@@ -18,30 +19,32 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return MaterialApp(
-      title: 'PixHealth',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: GoogleFonts.latoTextTheme(textTheme).copyWith(
-          body1: GoogleFonts.montserrat(
-            textStyle: textTheme.body1,
+    return ConnectivityAppWrapper(
+      app: MaterialApp(
+        title: 'PixHealth',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          textTheme: GoogleFonts.latoTextTheme(textTheme).copyWith(
+            body1: GoogleFonts.montserrat(
+              textStyle: textTheme.body1,
+            ),
           ),
         ),
+        initialRoute: '/',
+        routes: <String, WidgetBuilder>{
+          '/': (context) => SplashPage(),
+          '/login': (context) => LoginPage(),
+          '/signup': (context) => SignUpPage(),
+          '/dashboard': (context) => DashBoard(),
+          '/dashboard/profile': (context) => ViewDetails(),
+          '/dashboard/newsfeed': (context) => NewsFeed(),
+          '/dashboard/medicalhistory': (context) => MedicalHistory(),
+          '/dashboard/medicines': (context) => ViewMedicine(),
+          '/dashboard/furtherappointments': (context) => FurtherAppointment(),
+          '/dashboard/nearbyhospitals': (context) => NearbyHospital(),
+        },
       ),
-      initialRoute: '/',
-      routes: <String, WidgetBuilder>{
-        '/': (context) => SplashPage(),
-        '/login': (context) => LoginPage(),
-        '/signup': (context) => SignUpPage(),
-        '/dashboard': (context) => DashBoard(),
-        '/dashboard/profile': (context) => ViewDetails(),
-        '/dashboard/newsfeed': (context) => NewsFeed(),
-        '/dashboard/medicalhistory': (context) => MedicalHistory(),
-        '/dashboard/medicines': (context) => ViewMedicine(),
-        '/dashboard/furtherappointments': (context) => FurtherAppointment(),
-        '/dashboard/nearbyhospitals': (context) => NearbyHospital(),
-      },
     );
   }
 }

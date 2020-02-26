@@ -1,9 +1,13 @@
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DashBoard extends StatefulWidget {
   DashBoard({Key key, this.user});
+
   final FirebaseUser user;
+
   @override
   _DashBoardState createState() => _DashBoardState();
 }
@@ -16,7 +20,6 @@ class _DashBoardState extends State<DashBoard> {
         builder: (BuildContext context) {
           return AlertDialog(
             elevation: 8,
-            //backgroundColor: Color(0xFFffd589),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Text(
@@ -60,17 +63,29 @@ class _DashBoardState extends State<DashBoard> {
             elevation: 8,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            title: Text('Are you sure?'),
-            content: Text('You are going to Log out from application!!'),
+            title: Text(
+              'Are you sure?',
+              style: TextStyle(fontFamily: 'CinzelDecorative'),
+            ),
+            content: Text(
+              'You are going to Log out from application!!',
+              style: TextStyle(fontFamily: 'McLaren'),
+            ),
             actions: <Widget>[
               FlatButton(
-                child: Text('NO'),
+                child: Text(
+                  'NO',
+                  style: TextStyle(fontSize: 18, fontFamily: 'FontdinerSwanky'),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
               ),
               FlatButton(
-                child: Text('YES'),
+                child: Text(
+                  'YES',
+                  style: TextStyle(fontSize: 18, fontFamily: 'FontdinerSwanky'),
+                ),
                 onPressed: () {
                   FirebaseAuth.instance.signOut();
                   Navigator.of(context).pushNamedAndRemoveUntil(
@@ -155,6 +170,40 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
 
+  Widget offlineWidget() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Container(
+          decoration: BoxDecoration(
+            //color: Color(0xFFFFBA03),
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          //padding: EdgeInsets.all(12.0),
+          child: Padding(
+            padding: const EdgeInsets.all(60.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Please connect to an active internet connection..',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                CupertinoActivityIndicator(
+                  radius: 10.0,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -162,42 +211,46 @@ class _DashBoardState extends State<DashBoard> {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: Container(
-            child: Column(
-              children: <Widget>[
-                title(),
-                Expanded(
-                  flex: 1,
-                  child: SizedBox(),
-                ),
-                Expanded(
-                  flex: 9,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(36)),
-                        color: Color(0xFFFFBA03)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        makeContainer(
-                            context, 'View Details', '/dashboard/profile'),
-                        makeContainer(
-                            context, 'News Feed', '/dashboard/newsfeed'),
-                        makeContainer(context, 'View Medical History',
-                            '/dashboard/medicalhistory'),
-                        makeContainer(context, 'Further Appointment',
-                            '/dashboard/furtherappointments'),
-                        makeContainer(
-                            context, 'View Medicines', '/dashboard/medicines'),
-                        makeContainer(context, 'Nearby Hospitals',
-                            '/dashboard/nearbyhospitals'),
-                        makeLogoutContainer(context, 'Sign Out'),
-                      ],
+          body: ConnectivityWidgetWrapper(
+            disableInteraction: true,
+            offlineWidget: offlineWidget(),
+            child: Container(
+              child: Column(
+                children: <Widget>[
+                  title(),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(),
+                  ),
+                  Expanded(
+                    flex: 9,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(36)),
+                          color: Color(0xFFFFBA03)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          makeContainer(
+                              context, 'View Details', '/dashboard/profile'),
+                          makeContainer(
+                              context, 'News Feed', '/dashboard/newsfeed'),
+                          makeContainer(context, 'View Medical History',
+                              '/dashboard/medicalhistory'),
+                          makeContainer(context, 'Further Appointment',
+                              '/dashboard/furtherappointments'),
+                          makeContainer(context, 'View Medicines',
+                              '/dashboard/medicines'),
+                          makeContainer(context, 'Nearby Hospitals',
+                              '/dashboard/nearbyhospitals'),
+                          makeLogoutContainer(context, 'Sign Out'),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

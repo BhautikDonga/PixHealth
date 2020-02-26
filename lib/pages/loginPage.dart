@@ -1,4 +1,6 @@
+import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,25 +18,43 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  String _email, _password;
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
   Future<bool> _onBackPressed() {
     return showDialog(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
+            elevation: 8,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            title: Text('Are you sure?'),
-            content: Text('You are going to exit the application!!'),
+            title: Text(
+              'Are you sure?',
+              style: TextStyle(fontFamily: 'CinzelDecorative'),
+            ),
+            content: Text(
+              'You are going to exit the application!!',
+              style: TextStyle(fontFamily: 'McLaren'),
+            ),
             actions: <Widget>[
               FlatButton(
-                child: Text('NO'),
+                child: Text(
+                  'NO',
+                  style: TextStyle(fontSize: 18, fontFamily: 'FontdinerSwanky'),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
               ),
               FlatButton(
-                child: Text('YES'),
+                child: Text(
+                  'YES',
+                  style: TextStyle(fontSize: 18, fontFamily: 'FontdinerSwanky'),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
@@ -60,8 +80,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _entryField(String title, String error, {bool isPassword = false}) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      //margin: EdgeInsets.only(top: 20, bottom: 10),
+      margin: EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -105,6 +124,46 @@ class _LoginPageState extends State<LoginPage> {
         _entryField("Password", 'Please Enter correct password',
             isPassword: true),
       ],
+    );
+  }
+
+  Widget _offlineSubmitButton() {
+    return InkWell(
+      onTap: null,
+      child: Container(
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
+        padding: EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.shade200,
+                  offset: Offset(2, 4),
+                  blurRadius: 5,
+                  spreadRadius: 2)
+            ],
+            gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [Color(0xfffbb448), Color(0xfff7892b)])),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Connecting..',
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            CupertinoActivityIndicator(radius: 10.0),
+          ],
+        ),
+      ),
     );
   }
 
@@ -225,10 +284,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  String _email, _password;
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  FirebaseAuth _auth = FirebaseAuth.instance;
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -236,59 +291,74 @@ class _LoginPageState extends State<LoginPage> {
       child: Form(
         key: _formKey,
         child: Scaffold(
+            key: _scaffoldKey,
             body: SingleChildScrollView(
-                child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
+              child: Container(
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height,
+                child: Stack(
                   children: <Widget>[
-                    Expanded(
-                      flex: 2,
-                      child: SizedBox(
-                        height: 40,
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            flex: 3,
+                            child: SizedBox(
+                              height: 40,
+                            ),
+                          ),
+                          _title(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          _emailPasswordWidget(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          ConnectivityWidgetWrapper(
+                            stacked: false,
+                            offlineWidget: _offlineSubmitButton(),
+                            child: _submitButton(),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            alignment: Alignment.centerRight,
+                            child: Text('Forgot Password ?',
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w500)),
+                          ),
+                          _divider(),
+                          Expanded(
+                            flex: 2,
+                            child: SizedBox(),
+                          ),
+                        ],
                       ),
                     ),
-                    _title(),
-                    SizedBox(
-                      height: 20,
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: _createAccountLabel(),
                     ),
-                    _emailPasswordWidget(),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    _submitButton(),
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      alignment: Alignment.centerRight,
-                      child: Text('Forgot Password ?',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500)),
-                    ),
-                    _divider(),
-                    Expanded(
-                      flex: 1,
-                      child: SizedBox(),
-                    ),
+                    //Positioned(top: 40, left: 0, child: _backButton()),
+                    Positioned(
+                        top: -MediaQuery
+                            .of(context)
+                            .size
+                            .height * .14,
+                        right: -MediaQuery
+                            .of(context)
+                            .size
+                            .width * .4,
+                        child: BezierContainer())
                   ],
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: _createAccountLabel(),
-              ),
-              //Positioned(top: 40, left: 0, child: _backButton()),
-              Positioned(
-                  top: -MediaQuery.of(context).size.height * .14,
-                  right: -MediaQuery.of(context).size.width * .4,
-                  child: BezierContainer())
-            ],
-          ),
-        ))),
+            )),
       ),
     );
   }
@@ -305,7 +375,7 @@ class _LoginPageState extends State<LoginPage> {
 
         showAlertDialog(context);
         FirebaseUser user = (await _auth.signInWithEmailAndPassword(
-                email: _email, password: _password))
+            email: _email, password: _password))
             .user;
         print(user);
         Navigator.of(context).pop();
@@ -313,6 +383,11 @@ class _LoginPageState extends State<LoginPage> {
             MaterialPageRoute(builder: (context) => DashBoard(user: user)));
       } catch (e) {
         print(e.message);
+        Navigator.of(context).pop();
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(e.message),
+          duration: Duration(seconds: 5),
+        ));
       }
     }
   }
