@@ -14,7 +14,7 @@ class _ViewMedicineState extends State<ViewMedicine> {
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     ref
         .child("Users")
-        .child('UserId1')
+        .child('321321321321')
         .child('Medicines')
         .once()
         .then((DataSnapshot snap) {

@@ -372,12 +372,14 @@ class _LoginPageState extends State<LoginPage> {
         print(_email);
         print(_password);
         SystemChannels.textInput.invokeMethod('TextInput.hide');
-
         showAlertDialog(context);
         FirebaseUser user = (await _auth.signInWithEmailAndPassword(
             email: _email, password: _password))
             .user;
         print(user);
+        if (!user.isEmailVerified) {
+          throw FormatException("Please verify your email address first.");
+        }
         Navigator.of(context).pop();
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => DashBoard(user: user)));

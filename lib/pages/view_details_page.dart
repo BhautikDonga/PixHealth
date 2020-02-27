@@ -26,7 +26,7 @@ class _ViewDetailsState extends State<ViewDetails> {
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     ref
         .child("Users")
-        .child('UserId1')
+        .child('321321321321')
         .child('Details')
         .once()
         .then((DataSnapshot snap) {

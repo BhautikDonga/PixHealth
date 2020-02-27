@@ -14,7 +14,10 @@ class _ImageListState extends State<ImageList> {
   @override
   void initState() {
     for (var url in widget.listOfImages) {
-      images.add(Image.network(url));
+      images.add(FadeInImage.assetNetwork(
+        placeholder: 'images/giphy3.gif',
+        image: url,
+      ));
     }
   }
 

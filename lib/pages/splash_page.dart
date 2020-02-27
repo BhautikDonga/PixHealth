@@ -18,7 +18,7 @@ class _SplashPageState extends State<SplashPage> {
 
     String route;
     _auth.currentUser().then((user) {
-      if (user == null) {
+      if (user == null || (user.isEmailVerified == false)) {
         route = '/login';
       } else {
         route = '/dashboard';

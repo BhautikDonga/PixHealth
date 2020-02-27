@@ -1,5 +1,6 @@
 import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,7 +19,21 @@ class _SignUpPageState extends State<SignUpPage> {
   String _userid, _email, _password;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FirebaseAuth _auth = FirebaseAuth.instance;
+  DatabaseReference ref = FirebaseDatabase.instance.reference();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<int> userIds = [];
+
+  @override
+  void initState() {
+    ref.child('Users').once().then((DataSnapshot snap) {
+      var keys = snap.value.keys;
+      for (var key in keys) {
+        userIds.add(int.parse(key));
+      }
+      //print(userIds);
+    });
+    //print(userIds);
+  }
 
   showAlertDialog(BuildContext context) {
     showDialog(
@@ -32,6 +47,39 @@ class _SignUpPageState extends State<SignUpPage> {
         );
       },
     );
+  }
+
+  showEmailVerificationDialog(BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: Text(
+              "Email verification",
+              style: TextStyle(fontFamily: 'CinzelDecorative'),
+            ),
+            content: Text(
+              'An verification email is sent to your registered email address. Please verity it.',
+              style: TextStyle(fontFamily: 'McLaren'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  'OK',
+                  style: TextStyle(fontSize: 18, fontFamily: 'FontdinerSwanky'),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/login', (Route<dynamic> route) => false);
+                },
+              ),
+            ],
+          );
+        });
   }
 
   Widget _backButton() {
@@ -55,7 +103,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _entryField(String title, String error, {bool isPassword = false}) {
+  Widget _entryField(String title, Widget formFieldWidget) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 6),
       child: Column(
@@ -68,38 +116,84 @@ class _SignUpPageState extends State<SignUpPage> {
           SizedBox(
             height: 10,
           ),
-          TextFormField(
-              validator: (String value) {
-                return value.length <= 8 ? error : null;
-              },
-              onSaved: (value) {
-                if (title == 'User Id') {
-                  _userid = value.toLowerCase().trim();
-                }
-                if (title == 'Email Id') {
-                  _email = value.toLowerCase().trim();
-                }
-                if (title == 'Password') {
-                  _password = value.trim();
-                }
-              },
-              obscureText: isPassword,
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  fillColor: Color(0xfff3f3f4),
-                  filled: true))
+          formFieldWidget,
         ],
       ),
     );
   }
 
+  Widget emailTextFormField() {
+    return TextFormField(
+        validator: (String value) {
+          value = value.trim();
+          bool validEmail = RegExp(r"^[.]+(@gmail.com)$").hasMatch(value);
+          if (validEmail) {
+            return "Please enter your google email address.";
+          } else {
+            return null;
+          }
+        },
+        onSaved: (value) {
+          setState(() {
+            _email = value.toLowerCase().trim();
+          });
+        },
+        decoration: InputDecoration(
+            border: InputBorder.none,
+            fillColor: Color(0xfff3f3f4),
+            filled: true));
+  }
+
+  Widget passwordTextFormField() {
+    return TextFormField(
+        validator: (String value) {
+          value = value.trim();
+          return value.length < 8 ? "password must have 8 charactes." : null;
+        },
+        onSaved: (value) {
+          setState(() {
+            _password = value.trim();
+          });
+        },
+        obscureText: true,
+        decoration: InputDecoration(
+            border: InputBorder.none,
+            fillColor: Color(0xfff3f3f4),
+            filled: true));
+  }
+
+  Widget userIdTextFormField() {
+    return TextFormField(
+        validator: (String value) {
+          value = value.trim();
+          bool validUserId = RegExp(r"^[0-9]+$").hasMatch(value);
+          if (!validUserId) {
+            return "UserId has only numeric value.";
+          }
+          if (value.length != 12) {
+            return "UserId has 12 digits.";
+          } else {
+            return null;
+          }
+        },
+        onSaved: (value) {
+          setState(() {
+            _userid = value.trim();
+          });
+        },
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+            border: InputBorder.none,
+            fillColor: Color(0xfff3f3f4),
+            filled: true));
+  }
+
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("User Id", "Enter valid user id."),
-        _entryField("Email Id", "Please Enter your Email"),
-        _entryField("Password", 'Please Enter correct password',
-            isPassword: true),
+        _entryField("User Id", userIdTextFormField()),
+        _entryField("Email Id", emailTextFormField()),
+        _entryField("Password", passwordTextFormField()),
       ],
     );
   }
@@ -235,7 +329,10 @@ class _SignUpPageState extends State<SignUpPage> {
           key: _scaffoldKey,
           body: SingleChildScrollView(
               child: Container(
-                height: MediaQuery.of(context).size.height,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height,
                 child: Stack(
                   children: <Widget>[
                     Container(
@@ -274,8 +371,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     Positioned(top: 40, left: 0, child: _backButton()),
                     Positioned(
-                        top: -MediaQuery.of(context).size.height * .16,
-                        right: -MediaQuery.of(context).size.width * .45,
+                        top: -MediaQuery
+                            .of(context)
+                            .size
+                            .height * .16,
+                        right: -MediaQuery
+                            .of(context)
+                            .size
+                            .width * .45,
                         child: BezierContainer())
                   ],
                 ),
@@ -290,11 +393,18 @@ class _SignUpPageState extends State<SignUpPage> {
       formState.save();
       try {
         showAlertDialog(context);
+        print(userIds);
+        if (!userIds.contains(int.parse(_userid))) {
+          throw FormatException("Your user id is not linked with database");
+        }
         await _auth.createUserWithEmailAndPassword(
             email: _email, password: _password);
         sendEmailVerification();
-        Navigator.of(context).popUntil(ModalRoute.withName('/login'));
+
+        //Navigator.of(context).popUntil(ModalRoute.withName('/login'));
+        showEmailVerificationDialog(context);
       } catch (e) {
+        Navigator.of(context).pop();
         print('Error: ' + e.message);
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text(e.message),

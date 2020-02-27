@@ -65,7 +65,7 @@ class _MedicalHistoryState extends State<MedicalHistory> {
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     ref
         .child("Users")
-        .child('UserId1')
+        .child('321321321321')
         .child('Reports')
         .once()
         .then((DataSnapshot snap) {
