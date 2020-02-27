@@ -381,8 +381,10 @@ class _LoginPageState extends State<LoginPage> {
           throw FormatException("Please verify your email address first.");
         }
         Navigator.of(context).pop();
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => DashBoard(user: user)));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DashBoard(email: user.email)));
       } catch (e) {
         print(e.message);
         Navigator.of(context).pop();

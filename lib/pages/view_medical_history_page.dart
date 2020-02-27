@@ -5,6 +5,10 @@ import 'package:pix_health/pages/report_data.dart';
 import 'package:pix_health/pages/report_prescription_dialog.dart';
 
 class MedicalHistory extends StatefulWidget {
+  final String argument;
+
+  const MedicalHistory({Key key, this.argument}) : super(key: key);
+
   @override
   _MedicalHistoryState createState() => _MedicalHistoryState();
 }
@@ -12,6 +16,36 @@ class MedicalHistory extends StatefulWidget {
 class _MedicalHistoryState extends State<MedicalHistory> {
   List<ReportData> reportData = [];
   List<Widget> _children = [];
+
+  @override
+  void initState() {
+    //final DashBoard args = ModalRoute.of(context).settings.arguments;
+    //final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    DatabaseReference ref = FirebaseDatabase.instance.reference();
+    ref
+        .child("Users")
+        .child(widget.argument)
+        .child('Reports')
+        .once()
+        .then((DataSnapshot snap) {
+      var keys = snap.value.keys;
+      var data = snap.value;
+      reportData.clear();
+      for (var key in keys) {
+        ReportData d = ReportData(
+            data[key]['Date'],
+            data[key]['Doctor'],
+            data[key]['Hospital'],
+            data[key]['Diagnosis'],
+            data[key]['ReportUrl'],
+            data[key]['PrescriptionUrl']);
+        reportData.add(d);
+      }
+      setState(() {
+        print('Length: ${reportData.length}');
+      });
+    });
+  }
 
   Future<void> _ackDocuments(BuildContext context) {
     return showDialog<void>(
@@ -58,34 +92,6 @@ class _MedicalHistoryState extends State<MedicalHistory> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    DatabaseReference ref = FirebaseDatabase.instance.reference();
-    ref
-        .child("Users")
-        .child('321321321321')
-        .child('Reports')
-        .once()
-        .then((DataSnapshot snap) {
-      var keys = snap.value.keys;
-      var data = snap.value;
-      reportData.clear();
-      for (var key in keys) {
-        ReportData d = ReportData(
-            data[key]['Date'],
-            data[key]['Doctor'],
-            data[key]['Hospital'],
-            data[key]['Diagnosis'],
-            data[key]['ReportUrl'],
-            data[key]['PrescriptionUrl']);
-        reportData.add(d);
-      }
-      setState(() {
-        print('Length: ${reportData.length}');
-      });
-    });
   }
 
   @override

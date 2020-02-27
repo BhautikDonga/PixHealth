@@ -1,16 +1,7 @@
 import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pix_health/pages/dashboard.dart';
-import 'package:pix_health/pages/further_appointment_page.dart';
-import 'package:pix_health/pages/loginPage.dart';
-import 'package:pix_health/pages/nearby_hospital_page.dart';
-import 'package:pix_health/pages/news_feed_page.dart';
-import 'package:pix_health/pages/signup.dart';
-import 'package:pix_health/pages/splash_page.dart';
-import 'package:pix_health/pages/view_details_page.dart';
-import 'package:pix_health/pages/view_medical_history_page.dart';
-import 'package:pix_health/pages/view_medicine_page.dart';
+import 'package:pix_health/services/router.dart' as router;
 
 void main() => runApp(MyApp());
 
@@ -31,19 +22,8 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        onGenerateRoute: router.generateRoute,
         initialRoute: '/',
-        routes: <String, WidgetBuilder>{
-          '/': (context) => SplashPage(),
-          '/login': (context) => LoginPage(),
-          '/signup': (context) => SignUpPage(),
-          '/dashboard': (context) => DashBoard(),
-          '/dashboard/profile': (context) => ViewDetails(),
-          '/dashboard/newsfeed': (context) => NewsFeed(),
-          '/dashboard/medicalhistory': (context) => MedicalHistory(),
-          '/dashboard/medicines': (context) => ViewMedicine(),
-          '/dashboard/furtherappointments': (context) => FurtherAppointment(),
-          '/dashboard/nearbyhospitals': (context) => NearbyHospital(),
-        },
       ),
     );
   }

@@ -2,6 +2,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class NearbyHospital extends StatefulWidget {
+  NearbyHospital({Key key, this.userId});
+
+  String userId;
+
   @override
   _NearbyHospitalState createState() => _NearbyHospitalState();
 }

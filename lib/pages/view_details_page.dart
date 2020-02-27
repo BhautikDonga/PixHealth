@@ -2,6 +2,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class ViewDetails extends StatefulWidget {
+  final String argument;
+
+  const ViewDetails({Key key, this.argument}) : super(key: key);
+
   @override
   _ViewDetailsState createState() => _ViewDetailsState();
 }
@@ -23,10 +27,12 @@ class _ViewDetailsState extends State<ViewDetails> {
 
   @override
   void initState() {
+    //final DashBoard args = ModalRoute.of(context).settings.arguments;
+    //final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     ref
         .child("Users")
-        .child('321321321321')
+        .child(widget.argument)
         .child('Details')
         .once()
         .then((DataSnapshot snap) {

@@ -400,8 +400,9 @@ class _SignUpPageState extends State<SignUpPage> {
         await _auth.createUserWithEmailAndPassword(
             email: _email, password: _password);
         sendEmailVerification();
-
-        //Navigator.of(context).popUntil(ModalRoute.withName('/login'));
+        String emailPrefix = _email.split("@gmail.com")[0];
+        DatabaseReference ref = FirebaseDatabase.instance.reference();
+        ref.child("UIds").child("UserID").child(emailPrefix).set(_userid);
         showEmailVerificationDialog(context);
       } catch (e) {
         Navigator.of(context).pop();

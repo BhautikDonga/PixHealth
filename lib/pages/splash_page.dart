@@ -15,19 +15,18 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-
-    String route;
     _auth.currentUser().then((user) {
       if (user == null || (user.isEmailVerified == false)) {
-        route = '/login';
+        Timer(Duration(seconds: 3),
+                () => Navigator.of(context).pushReplacementNamed('/login'));
       } else {
-        route = '/dashboard';
+        Timer(
+            Duration(seconds: 3),
+                () =>
+                Navigator.of(context)
+                    .pushReplacementNamed('/dashboard', arguments: user.email));
       }
     });
-    //while (!isConnected) {}
-
-    Timer(Duration(seconds: 3),
-        () => Navigator.of(context).pushReplacementNamed(route));
   }
 
   @override

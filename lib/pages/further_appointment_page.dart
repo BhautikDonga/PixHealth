@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:pix_health/pages/appointment_data.dart';
 
 class FurtherAppointment extends StatefulWidget {
+  final String argument;
+
+  const FurtherAppointment({Key key, this.argument}) : super(key: key);
+
   @override
   _FurtherAppointmentState createState() => _FurtherAppointmentState();
 }
@@ -10,36 +14,14 @@ class FurtherAppointment extends StatefulWidget {
 class _FurtherAppointmentState extends State<FurtherAppointment> {
   List<AppointmentData> allData = [];
 
-  Widget UI(String date, String checkup, String doctor, String hospital) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Card(
-        elevation: 10.0,
-        child: Container(
-          padding: EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Checkup : $checkup',
-                style: Theme.of(context).textTheme.title,
-              ),
-              Text('Date : $date'),
-              Text('Doctor : $doctor'),
-              Text('Hospital : $hospital'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   void initState() {
+    //final DashBoard args = ModalRoute.of(context).settings.arguments;
+    //final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     ref
         .child("Users")
-        .child('321321321321')
+        .child(widget.argument)
         .child('Appointments')
         .once()
         .then((DataSnapshot snap) {
@@ -55,6 +37,33 @@ class _FurtherAppointmentState extends State<FurtherAppointment> {
         print('Length: ${allData.length}');
       });
     });
+  }
+
+  Widget UI(String date, String checkup, String doctor, String hospital) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Card(
+        elevation: 10.0,
+        child: Container(
+          padding: EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Checkup : $checkup',
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .title,
+              ),
+              Text('Date : $date'),
+              Text('Doctor : $doctor'),
+              Text('Hospital : $hospital'),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override

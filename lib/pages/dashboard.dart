@@ -1,18 +1,33 @@
 import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DashBoard extends StatefulWidget {
-  DashBoard({Key key, this.user});
+  final String email;
 
-  final FirebaseUser user;
-
+  const DashBoard({Key key, this.email}) : super(key: key);
   @override
   _DashBoardState createState() => _DashBoardState();
 }
 
 class _DashBoardState extends State<DashBoard> {
+  String userId;
+  DatabaseReference ref = FirebaseDatabase.instance.reference();
+
+  @override
+  void initState() {
+    String emailPrefix = widget.email.split("@gmail.com")[0];
+    print(emailPrefix);
+    ref.child("UIds").child("UserID").once().then((DataSnapshot snap) {
+      setState(() {
+        userId = snap.value[emailPrefix];
+      });
+    });
+    print(userId);
+  }
+
   Future<bool> _onBackPressed() {
     return showDialog(
         context: context,
@@ -126,7 +141,7 @@ class _DashBoardState extends State<DashBoard> {
   Widget makeContainer(BuildContext context, String text, String route) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, route);
+        Navigator.pushNamed(context, route, arguments: userId);
       },
       child: makeCardButton(text),
     );
@@ -215,7 +230,16 @@ class _DashBoardState extends State<DashBoard> {
             disableInteraction: true,
             offlineWidget: offlineWidget(),
             child: Container(
-              child: Column(
+              child: userId == null
+                  ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(),
+                      Text('Data loading...'),
+                    ],
+                  ))
+                  : Column(
                 children: <Widget>[
                   title(),
                   Expanded(
@@ -225,17 +249,19 @@ class _DashBoardState extends State<DashBoard> {
                   Expanded(
                     flex: 9,
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 8),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(36)),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(36)),
                           color: Color(0xFFFFBA03)),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          makeContainer(
-                              context, 'View Details', '/dashboard/profile'),
-                          makeContainer(
-                              context, 'News Feed', '/dashboard/newsfeed'),
+                          makeContainer(context, 'View Details',
+                              '/dashboard/profile'),
+                          makeContainer(context, 'News Feed',
+                              '/dashboard/newsfeed'),
                           makeContainer(context, 'View Medical History',
                               '/dashboard/medicalhistory'),
                           makeContainer(context, 'Further Appointment',
