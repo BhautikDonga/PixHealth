@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ImageList extends StatefulWidget {
-  ImageList(this.listOfImages);
+  ImageList(this.url);
 
-  var listOfImages;
+  String url;
 
   @override
   _ImageListState createState() => _ImageListState();
@@ -13,12 +13,10 @@ class ImageList extends StatefulWidget {
 class _ImageListState extends State<ImageList> {
   @override
   void initState() {
-    for (var url in widget.listOfImages) {
-      images.add(FadeInImage.assetNetwork(
-        placeholder: 'images/giphy3.gif',
-        image: url,
-      ));
-    }
+    images.add(FadeInImage.assetNetwork(
+      placeholder: 'images/giphy3.gif',
+      image: widget.url,
+    ));
   }
 
   List<Widget> images = [];

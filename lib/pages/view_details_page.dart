@@ -22,13 +22,13 @@ class _ViewDetailsState extends State<ViewDetails> {
     "Weight",
     "Genetic Disease",
     "Chronic Disease",
-    "Allergies"
+    "Allergies",
+    "Addiction",
+    "Address"
   ];
 
   @override
   void initState() {
-    //final DashBoard args = ModalRoute.of(context).settings.arguments;
-    //final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     DatabaseReference ref = FirebaseDatabase.instance.reference();
     ref
         .child("Users")

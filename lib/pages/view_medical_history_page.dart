@@ -59,7 +59,7 @@ class _MedicalHistoryState extends State<MedicalHistory> {
   }
 
   Widget UI(String date, String doctor, String hospital, String diagnosis,
-      var report_url, var prescription_url) {
+      String report_url, String prescription_url) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: InkWell(

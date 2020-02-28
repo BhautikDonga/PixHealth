@@ -18,13 +18,12 @@ class _SplashPageState extends State<SplashPage> {
     _auth.currentUser().then((user) {
       if (user == null || (user.isEmailVerified == false)) {
         Timer(Duration(seconds: 3),
-                () => Navigator.of(context).pushReplacementNamed('/login'));
+            () => Navigator.of(context).pushReplacementNamed('/login'));
       } else {
         Timer(
             Duration(seconds: 3),
-                () =>
-                Navigator.of(context)
-                    .pushReplacementNamed('/dashboard', arguments: user.email));
+            () => Navigator.of(context)
+                .pushReplacementNamed('/dashboard', arguments: user.email));
       }
     });
   }

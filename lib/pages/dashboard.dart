@@ -20,12 +20,15 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     String emailPrefix = widget.email.split("@gmail.com")[0];
     print(emailPrefix);
-    ref.child("UIds").child("UserID").once().then((DataSnapshot snap) {
-      setState(() {
-        userId = snap.value[emailPrefix];
+    try {
+      ref.child("UIds").child("UserID").once().then((DataSnapshot snap) {
+        setState(() {
+          userId = snap.value[emailPrefix];
+        });
       });
-    });
-    print(userId);
+    } catch (e) {
+      print(e.message);
+    }
   }
 
   Future<bool> _onBackPressed() {
